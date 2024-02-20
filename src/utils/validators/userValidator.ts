@@ -2,8 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { body, ValidationChain, validationResult } from "express-validator";
 
 export const signUpValidationRules = (): ValidationChain[] => [
-  body("email").isEmail().withMessage("Enter a valid email address"),
+  body("email")
+    .isEmail()
+    .withMessage("Enter a valid email address")
+    .normalizeEmail(),
   body("username")
+    .trim()
     .isLength({ min: 2 })
     .withMessage("Username must be at least 2 characters long"),
   body("password")
@@ -12,7 +16,10 @@ export const signUpValidationRules = (): ValidationChain[] => [
 ];
 
 export const signInValidationRules = (): ValidationChain[] => [
-  body("email").isEmail().withMessage("Enter a valid email address"),
+  body("email")
+    .isEmail()
+    .withMessage("Enter a valid email address")
+    .normalizeEmail(),
   body("password")
     .isLength({ min: 5 })
     .withMessage("Password must be at least 5 characters long"),
