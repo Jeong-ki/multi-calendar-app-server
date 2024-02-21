@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { findUserById } from "../models/userModel";
+import { config } from "./config";
 
 const AUTH_ERROR = { message: "Authentication Error" };
 const WRONG_TOKEN = { message: "Token has wrong" };
@@ -17,7 +18,7 @@ export const isAuth = async (
   }
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.JWT_SECRET || "", async (error, decoded) => {
+  jwt.verify(token, config.jwt.secretKey, async (error, decoded) => {
     if (error instanceof jwt.TokenExpiredError) {
       return res.status(401).json(EXPIRED_TOKEN);
     }

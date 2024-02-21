@@ -1,12 +1,13 @@
+import { required } from ".";
 import "./dotenv";
 import { Pool } from "pg";
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || "", 10),
+  user: required("DB_USER"),
+  host: required("DB_HOST"),
+  database: required("DB_NAME"),
+  password: required("DB_PASSWORD"),
+  port: parseInt(required("DB_PORT"), 10),
 });
 
 export default pool;
