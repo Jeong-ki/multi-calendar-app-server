@@ -40,8 +40,13 @@ export const signInUser = async (req: Request, res: Response) => {
         config.jwt.secretKey,
         { expiresIn: Number(config.jwt.expiresInSec) }
       );
+      const refreshToken = jwt.sign(
+        { userId: user.rows[0].id },
+        config.jwt.refreshSecretKey,
+        { expiresIn: Number(config.jwt.refreshExpiresInSec) }
+      );
       const { id, email, username } = user.rows[0];
-      res.json({ id, email, username, token });
+      res.json({ id, email, username, token, refreshToken });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }
