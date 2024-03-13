@@ -40,3 +40,13 @@ export const isAuth = async (
     next();
   });
 };
+
+export const getAuthToken = (userId: number) => {
+  const token = jwt.sign({ userId }, config.jwt.secretKey, {
+    expiresIn: Number(config.jwt.expiresInSec),
+  });
+  const refreshToken = jwt.sign({ userId }, config.jwt.refreshSecretKey, {
+    expiresIn: Number(config.jwt.refreshExpiresInSec),
+  });
+  return { token, refreshToken };
+};
