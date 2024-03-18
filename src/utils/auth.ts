@@ -5,7 +5,7 @@ import { config } from "./config";
 
 const AUTH_ERROR = { message: "Authentication Error" };
 const WRONG_TOKEN = { message: "Token has wrong" };
-const EXPIRED_TOKEN = { message: "Token has expired" };
+const EXPIRED_TOKEN = { message: "Token has expired", code: "expired" };
 
 export const isAuth = async (
   req: Request,
@@ -42,11 +42,11 @@ export const isAuth = async (
 };
 
 export const getAuthToken = (userId: number) => {
-  const token = jwt.sign({ userId }, config.jwt.secretKey, {
+  const accessToken = jwt.sign({ userId }, config.jwt.secretKey, {
     expiresIn: Number(config.jwt.expiresInSec),
   });
   const refreshToken = jwt.sign({ userId }, config.jwt.refreshSecretKey, {
     expiresIn: Number(config.jwt.refreshExpiresInSec),
   });
-  return { token, refreshToken };
+  return { accessToken, refreshToken };
 };

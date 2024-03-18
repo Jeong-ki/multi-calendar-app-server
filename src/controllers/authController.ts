@@ -20,9 +20,9 @@ export const signUpUser = async (req: Request, res: Response) => {
     const result = await createUser(email, username, hashedPassword);
 
     const { id } = result.rows[0];
-    const { token, refreshToken } = getAuthToken(id);
+    const { accessToken, refreshToken } = getAuthToken(id);
 
-    res.status(201).json({ id, email, username, token, refreshToken });
+    res.status(201).json({ id, email, username, accessToken, refreshToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -39,8 +39,8 @@ export const signInUser = async (req: Request, res: Response) => {
       (await bcrypt.compare(password, user.rows[0].password))
     ) {
       const { id, email, username } = user.rows[0];
-      const { token, refreshToken } = getAuthToken(id);
-      res.json({ id, email, username, token, refreshToken });
+      const { accessToken, refreshToken } = getAuthToken(id);
+      res.json({ id, email, username, accessToken, refreshToken });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }
@@ -64,8 +64,9 @@ export const myInfo = async (req: Request, res: Response) => {
   }
 };
 
-export const reissuanceToken = async (req: Request, res: Response) => {
+export const refreshUser = async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
+
   if (!refreshToken) {
     return res.status(401).json({ error: "Refresh Token is required" });
   }
@@ -74,6 +75,9 @@ export const reissuanceToken = async (req: Request, res: Response) => {
       refreshToken,
       config.jwt.refreshSecretKey
     ) as JwtPayload;
+
+    const user = await findUserById(decoded.userId);
+    const { id, email, username } = user.rows[0];
 
     const newAccessToken = jwt.sign(
       { userId: decoded.userId },
@@ -87,7 +91,7 @@ export const reissuanceToken = async (req: Request, res: Response) => {
       { expiresIn: Number(config.jwt.refreshExpiresInSec) }
     );
 
-    res.json({ newAccessToken, newRefreshToken });
+    res.json({ id, email, username, newAccessToken, newRefreshToken });
   } catch (error) {
     res.status(403).json({ error: "Invalid or Expired Refresh Token" });
   }

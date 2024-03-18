@@ -3,7 +3,7 @@ import {
   signInUser,
   signUpUser,
   myInfo,
-  reissuanceToken,
+  refreshUser,
 } from "../controllers/authController";
 import { isAuth } from "../utils/auth";
 import {
@@ -14,9 +14,9 @@ import {
 
 const router = express.Router();
 
-router.post("/signUp", signUpValidationRules(), validate, signUpUser);
-router.post("/signIn", signInValidationRules(), validate, signInUser);
-router.get("/myInfo", isAuth, myInfo);
-router.post("/refresh-token", reissuanceToken);
+router.post("/signup", signUpValidationRules(), validate, signUpUser);
+router.post("/signin", signInValidationRules(), validate, signInUser);
+router.get("/my", isAuth, myInfo);
+router.post("/refresh-user", refreshUser);
 
 export default router;
