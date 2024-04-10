@@ -12,3 +12,14 @@ export const createMemo = async (
     [userId, year, month, day, memo]
   );
 };
+
+export const findMemosByMonth = async (
+  userId: number,
+  year: number,
+  month: number
+) => {
+  return pool.query(
+    "SELECT * FROM calendar WHERE user_id = $1 AND year = $2 AND month = $3",
+    [userId, year, month]
+  );
+};
