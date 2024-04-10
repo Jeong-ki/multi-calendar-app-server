@@ -6,10 +6,6 @@ export const signUpValidationRules = (): ValidationChain[] => [
     .isEmail()
     .withMessage("Enter a valid email address")
     .normalizeEmail(),
-  body("username")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Username must be at least 2 characters long"),
   body("password")
     .isLength({ min: 5 })
     .withMessage("Password must be at least 5 characters long"),

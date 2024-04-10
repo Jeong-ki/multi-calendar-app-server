@@ -7,7 +7,7 @@ import { getAuthToken } from "../utils/auth";
 
 export const signUpUser = async (req: Request, res: Response) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, password } = req.body;
     const user = await findUserByEmail(email);
 
     if (user.rows.length > 0) {
@@ -17,12 +17,12 @@ export const signUpUser = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await createUser(email, username, hashedPassword);
+    const result = await createUser(email, hashedPassword);
 
     const { id } = result.rows[0];
     const { accessToken, refreshToken } = getAuthToken(id);
 
-    res.status(201).json({ id, email, username, accessToken, refreshToken });
+    res.status(201).json({ id, email, accessToken, refreshToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -38,9 +38,9 @@ export const signInUser = async (req: Request, res: Response) => {
       user.rows.length > 0 &&
       (await bcrypt.compare(password, user.rows[0].password))
     ) {
-      const { id, email, username } = user.rows[0];
+      const { id, email } = user.rows[0];
       const { accessToken, refreshToken } = getAuthToken(id);
-      res.json({ id, email, username, accessToken, refreshToken });
+      res.json({ id, email, accessToken, refreshToken });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }
@@ -54,8 +54,8 @@ export const myInfo = async (req: Request, res: Response) => {
     const id = req.userId as number;
     const user = await findUserById(id);
     if (user.rows.length > 0) {
-      const { id, email, username, created_at } = user.rows[0];
-      res.json({ id, email, username, created_at });
+      const { id, email, created_at } = user.rows[0];
+      res.json({ id, email, created_at });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }
@@ -77,7 +77,7 @@ export const refreshUser = async (req: Request, res: Response) => {
     ) as JwtPayload;
 
     const user = await findUserById(decoded.userId);
-    const { id, email, username } = user.rows[0];
+    const { id, email } = user.rows[0];
 
     const newAccessToken = jwt.sign(
       { userId: decoded.userId },
@@ -91,7 +91,7 @@ export const refreshUser = async (req: Request, res: Response) => {
       { expiresIn: Number(config.jwt.refreshExpiresInSec) }
     );
 
-    res.json({ id, email, username, newAccessToken, newRefreshToken });
+    res.json({ id, email, newAccessToken, newRefreshToken });
   } catch (error) {
     res.status(403).json({ error: "Invalid or Expired Refresh Token" });
   }

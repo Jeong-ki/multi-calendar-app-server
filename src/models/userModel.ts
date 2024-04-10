@@ -1,13 +1,9 @@
 import pool from "../utils/db";
 
-export const createUser = async (
-  email: string,
-  username: string,
-  hashedPassword: string
-) => {
+export const createUser = async (email: string, hashedPassword: string) => {
   return pool.query(
-    "INSERT INTO users (email, username, password) VALUES ($1, $2, $3) RETURNING *",
-    [email, username, hashedPassword]
+    "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
+    [email, hashedPassword]
   );
 };
 
