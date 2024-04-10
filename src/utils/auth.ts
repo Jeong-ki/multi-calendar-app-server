@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { findUserById } from "../models/userModel";
+import { findUserById } from "../models/authModel";
 import { config } from "./config";
 
 const AUTH_ERROR = { message: "Authentication Error" };

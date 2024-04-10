@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { createUser, findUserByEmail, findUserById } from "../models/userModel";
+import { createUser, findUserByEmail, findUserById } from "../models/authModel";
 import { config } from "../utils/config";
 import { getAuthToken } from "../utils/auth";
 
